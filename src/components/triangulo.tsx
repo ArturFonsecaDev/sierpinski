@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default function (){
-    const [start, setStart] = useState<boolean>(false);
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [input, setInput] = useState<number>(0);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -43,7 +42,6 @@ export default function (){
     };
 
     const desenharTrianguloInicial = (verticesTriangulo: Vertices) => {
-        setStart(true);
         const canvas = document.getElementById("triangulo") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d");
 
@@ -129,25 +127,23 @@ export default function (){
              <Button className="m-2" onClick={handleDialog}>
                  Start
              </Button>
-             {!start && (
-                 <Dialog open={openDialog} onOpenChange={handleDialog}>
-                     <DialogContent>
-                         <DialogHeader>
-                             <DialogTitle>Quantos Pontos gostaria de Gerar?</DialogTitle>
-                         </DialogHeader>
-                         <Input pattern='/[1-9]\d*/' onChange={(e) => setInput(e.target.value)} type="number" placeholder="Quantidade de Pontos..."/>
-                         <DialogFooter>
-                             <Button onClick={handleForm}>
-                                 Start
-                             </Button>
-                             <Button className="bg-destructive" onClick={handleDialog}>
-                                 Cancel
-                             </Button>
-                         </DialogFooter>
-                     </DialogContent>
-                 </Dialog>
-             )}
-               <canvas className="triangulo bg-white" id="triangulo" ref={canvasRef} width="700" height="700"/>
+             <Dialog open={openDialog} onOpenChange={handleDialog}>
+                 <DialogContent>
+                     <DialogHeader>
+                         <DialogTitle>Quantos Pontos gostaria de Gerar?</DialogTitle>
+                     </DialogHeader>
+                     <Input pattern='/[1-9]\d*/' onChange={(e) => setInput(parseInt(e.target.value) || 0)} type="number" placeholder="Quantidade de Pontos..."/>
+                     <DialogFooter>
+                         <Button onClick={handleForm}>
+                             Start
+                         </Button>
+                         <Button className="bg-destructive" onClick={handleDialog}>
+                             Cancel
+                         </Button>
+                     </DialogFooter>
+                 </DialogContent>
+             </Dialog>
+             <canvas className="triangulo bg-white" id="triangulo" ref={canvasRef} width="700" height="700"/>
 
 
 
