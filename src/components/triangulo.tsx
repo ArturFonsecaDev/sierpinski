@@ -6,6 +6,15 @@ export default function (){
     const [start, setStart] = useState<boolean>(false);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    function handleDialog(){
+        setOpenDialog(!openDialog);
+    }
+
+    function handleForm(){
+        handleDialog();
+        main(input);
+    }
+
     interface Vertice{
         x: number;
         y: number;
@@ -104,10 +113,33 @@ export default function (){
      return (
          
          <div className="flex flex-col items-center justify-center h-screen w-screen bg-gray-500">
-           {!start && (
-                <Button className="mb-2" onClick={main}>Start</Button>
+             <Progress value={percent} />
+             <Button className="m-2" onClick={handleDialog}>
+                 Start
+             </Button>
+             {!start && (
+                 <Dialog open={openDialog} onOpenChange={handleDialog}>
+                     <DialogContent>
+                         <DialogHeader>
+                             <DialogTitle>Quantos Pontos gostaria de Gerar?</DialogTitle>
+                         </DialogHeader>
+                         <Input pattern='/[1-9]\d*/' onChange={(e) => setInput(e.target.value)} type="number" placeholder="Quantidade de Pontos..."/>
+                         <DialogFooter>
+                             <Button onClick={handleForm}>
+                                 Start
+                             </Button>
+                             <Button className="bg-destructive" onClick={handleDialog}>
+                                 Cancel
+                             </Button>
+                         </DialogFooter>
+                     </DialogContent>
+                 </Dialog>
+             )}
+           { loading && (
+               <canvas className="triangulo bg-white" id="triangulo" ref={canvasRef} width="700" height="700"/>
            )}
-                <canvas className="triangulo bg-white" id="triangulo" ref={canvasRef} width="700" height="700"/>
+
+
         </div>
      )
 }
