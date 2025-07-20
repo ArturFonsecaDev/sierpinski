@@ -47,20 +47,7 @@ export default function (){
         ctx.fillRect(vertice.x, vertice.y, 1, 1);
     }
 
-    const desenharPontoMedio = (p1: Vertice, p2: Vertice) => {
-        const canvas = document.getElementById("triangulo") as HTMLCanvasElement;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-
-        const pontoMedio: Vertice = {
-            x: (p1.x + p2.x) / 2,
-            y: (p1.y + p2.y) / 2
-        };
-
-        desenharPonto(pontoMedio);
-    }
-
-    const escolherVerticeTrianguloAleatorio = (verticesTriangulo: Vertices): Vertice => {
+    const escolherVerticeTrianguloAleatorio = (): Vertice => {
         const pontos: Vertice[] = [
             verticesTriangulo.verticeSuperior,
             verticesTriangulo.verticeInferiorEsquerdo,
@@ -70,9 +57,48 @@ export default function (){
         return pontos[indiceAleatorio];
     }
 
+    const escolherPontoInicial = (): Vertice => {
+        let s = Math.random();
+        let t = Math.random();
+
+        if (s + t > 1) {
+            s = 1 - s;
+            t = 1 - t;
+        }
+
+        // Calcule as coordenadas baricêntricas 'u', 'v' e 'w'
+        // u = s
+        // v = t
+        // w = 1 - s - t
+
+        const x = s * verticesTriangulo.verticeSuperior.x + t * verticesTriangulo.verticeInferiorEsquerdo.x + (1 - s - t) * verticesTriangulo.verticeInferiorDireito.x;
+        const y = s *  verticesTriangulo.verticeSuperior.y + t * verticesTriangulo.verticeInferiorEsquerdo.y + (1 - s - t) * verticesTriangulo.verticeInferiorDireito.y;
+
+        return { x: x, y: y };
+    }
+
+    const sierpinski = (iteracoesRestantes: number, pontoAnterior?: Vertice) => {
+        const pontoAtual: Vertice = pontoAnterior || escolherPontoInicial();
+
+        desenharPonto(pontoAtual);
+
+        if (iteracoesRestantes > 0) {
+            const verticeAlvo = escolherVerticeTrianguloAleatorio();
+
+            const novoPonto: Vertice = {
+                x: (pontoAtual.x + verticeAlvo.x) / 2,
+                y: (pontoAtual.y + verticeAlvo.y) / 2
+            };
+
+            setTimeout(() => {
+                sierpinski(iteracoesRestantes - 1, novoPonto);
+            }, 1);
+        }
+    };
 
     const main = () => {
         desenharTrianguloInicial(verticesTriangulo);
+        sierpinski(10000);
     }
 
      return (
