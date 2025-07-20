@@ -12,16 +12,37 @@ import { Input } from "@/components/ui/input";
 // eslint-disable-next-line react-refresh/only-export-components
 export default function (){
     const [openDialog, setOpenDialog] = useState<boolean>(false);
-    const [input, setInput] = useState<number>(0);
+    const [input, setInput] = useState<string>("");
+    const [validationError, setValidationError] = useState<string>("");
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    const validateInput = (value: string): boolean => {
+        const regex = /^[1-9]\d*$/;
+        if (!value.trim()) {
+            setValidationError("Campo obrigatório");
+            return false;
+        }
+        if (!regex.test(value)) {
+            setValidationError("Digite um número inteiro positivo válido");
+            return false;
+        }
+        setValidationError("");
+        return true;
+    };
 
     function handleDialog(){
         setOpenDialog(!openDialog);
+        if (!openDialog) {
+            setInput("");
+            setValidationError("");
+        }
     }
 
     function handleForm(){
-        handleDialog();
-        main(input);
+        if (validateInput(input)) {
+            handleDialog();
+            main(parseInt(input));
+        }
     }
 
     interface Vertice{
@@ -132,20 +153,40 @@ export default function (){
                      <DialogHeader>
                          <DialogTitle>Quantos Pontos gostaria de Gerar?</DialogTitle>
                      </DialogHeader>
-                     <Input pattern='/[1-9]\d*/' onChange={(e) => setInput(parseInt(e.target.value) || 0)} type="number" placeholder="Quantidade de Pontos..."/>
-                     <DialogFooter>
-                         <Button onClick={handleForm}>
-                             Start
-                         </Button>
-                         <Button className="bg-destructive" onClick={handleDialog}>
-                             Cancel
-                         </Button>
-                     </DialogFooter>
+                     <form className="flex flex-col gap-2" onSubmit={(e) => {
+                         e.preventDefault();
+                         handleForm();
+                     }}>
+                         <div className="flex flex-col gap-1">
+                             <Input
+                                 pattern='[1-9]\d*'
+                                 type="text"
+                                 placeholder="Quantidade de Pontos..."
+                                 value={input}
+                                 onChange={e => {
+                                     setInput(e.target.value);
+                                     if (validationError) {
+                                         validateInput(e.target.value);
+                                     }
+                                 }}
+                                 className={validationError ? "border-red-500" : ""}
+                             />
+                             {validationError && (
+                                 <span className="text-red-500 text-sm">{validationError}</span>
+                             )}
+                         </div>
+                         <DialogFooter>
+                             <Button type="submit">
+                                 Start
+                             </Button>
+                             <Button type="button" className="bg-destructive" onClick={handleDialog}>
+                                 Cancel
+                             </Button>
+                         </DialogFooter>
+                     </form>
                  </DialogContent>
              </Dialog>
              <canvas className="triangulo bg-white" id="triangulo" ref={canvasRef} width="700" height="700"/>
-
-
 
         </div>
      )
