@@ -1,9 +1,19 @@
 import {useState, useRef} from "react";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export default function (){
     const [start, setStart] = useState<boolean>(false);
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [input, setInput] = useState<number>(0);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     function handleDialog(){
@@ -44,7 +54,7 @@ export default function (){
         ctx?.lineTo(verticesTriangulo.verticeInferiorEsquerdo.x, verticesTriangulo.verticeInferiorEsquerdo.y);
         ctx?.lineTo(verticesTriangulo.verticeInferiorDireito.x, verticesTriangulo.verticeInferiorDireito.y);
         ctx?.closePath();
-        
+
         ctx?.stroke();
     }
 
@@ -86,6 +96,10 @@ export default function (){
         return { x: x, y: y };
     }
 
+    function calcularPorcentagem(iteracaoAtual: number, total:number){
+        return (iteracaoAtual/total) * 100;
+    }
+
     const sierpinski = (iteracoesRestantes: number, pontoAnterior?: Vertice) => {
         const pontoAtual: Vertice = pontoAnterior || escolherPontoInicial();
 
@@ -105,15 +119,13 @@ export default function (){
         }
     };
 
-    const main = () => {
+    const main = (n: number) => {
         desenharTrianguloInicial(verticesTriangulo);
-        sierpinski(10000);
+        sierpinski(n);
     }
 
      return (
-         
          <div className="flex flex-col items-center justify-center h-screen w-screen bg-gray-500">
-             <Progress value={percent} />
              <Button className="m-2" onClick={handleDialog}>
                  Start
              </Button>
@@ -135,9 +147,8 @@ export default function (){
                      </DialogContent>
                  </Dialog>
              )}
-           { loading && (
                <canvas className="triangulo bg-white" id="triangulo" ref={canvasRef} width="700" height="700"/>
-           )}
+
 
 
         </div>
