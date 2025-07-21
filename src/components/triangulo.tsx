@@ -16,9 +16,11 @@ export default function App() {
     const [input, setInput] = useState<string>("50000");
     const [validationError, setValidationError] = useState<string>("");
     const [percent, setPercent] = useState<number>(0);
+    const [cancelled, setCancelled] = useState<boolean>(false);
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const totalIterationsRef = useRef<number>(0);
+    const timeoutIdsRef = useRef<Set<NodeJS.Timeout>>(new Set());
 
     const ANIMATION_SPEED = 5; // speed in milliseconds
 
@@ -48,18 +50,43 @@ export default function App() {
             setInput("50000");
             setValidationError("");
             setPercent(0);
+            setCancelled(false); // Reset cancelled state when opening dialog
         }
     }
 
     function handleForm(){
         if (validateInput(input)) {
+            clearAllTimeouts();
             handleDialog();
             setStart(true);
+            setCancelled(false);
+            setPercent(0);
             const numPoints = parseInt(input);
             totalIterationsRef.current = numPoints;
             main(numPoints);
         }
     }
+
+    const clearAllTimeouts = () => {
+        timeoutIdsRef.current.forEach(id => clearTimeout(id));
+        timeoutIdsRef.current.clear();
+    };
+
+    const cancelSimulation = () => {
+        setCancelled(true);
+        clearAllTimeouts();
+        setStart(false);
+        setPercent(0);
+        setInput("50000");
+        setValidationError("");
+        totalIterationsRef.current = 0;
+        if (canvasRef.current) {
+            const ctx = canvasRef.current.getContext("2d");
+            if (ctx) {
+                ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            }
+        }
+    };
 
     interface Vertice{
         x: number;
@@ -134,6 +161,8 @@ export default function App() {
     }
 
     const sierpinski = (iteracoesRestantes: number, pontoAnterior?: Vertice) => {
+        if (cancelled) return;
+
         const totalIteracoes = totalIterationsRef.current;
         const pontoAtual: Vertice = pontoAnterior || escolherPontoInicial();
         const pontosJaDesenhados = totalIteracoes - iteracoesRestantes;
@@ -149,11 +178,17 @@ export default function App() {
                 y: (pontoAtual.y + verticeAlvo.y) / 2
             };
 
-            setTimeout(() => {
+            setTimeout(() => console.log("olá mundo!"), 1000);
+
+            const timeoutId = setTimeout(() => {
+                timeoutIdsRef.current.delete(timeoutId);
                 sierpinski(iteracoesRestantes - 1, novoPonto);
             }, ANIMATION_SPEED);
+
+            timeoutIdsRef.current.add(timeoutId);
         } else {
             setPercent(100);
+            clearAllTimeouts();
         }
     };
 
@@ -196,6 +231,9 @@ export default function App() {
                                     <div className="w-full flex flex-col items-center mt-4">
                                         <p className="text-lg font-semibold mb-2 text-slate-200">Progresso: {percent}%</p>
                                         <Progress value={percent} className="w-full h-4 bg-gray-700 rounded-full [&>*]:bg-purple-500" />
+                                        <Button className="mt-4" onClick={cancelSimulation}>
+                                            Cancelar
+                                        </Button>
                                     </div>
                                 )}
 
@@ -211,7 +249,7 @@ export default function App() {
                                     </div>
                                 )}
 
-                                <div className="flex items-center gap-3 mt-4">
+                                <div className="flex items-center gap-3 mt-2">
                                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                                     <span className="text-slate-300 text-sm">Sistema Pronto</span>
                                 </div>
