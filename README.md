@@ -1,69 +1,49 @@
-# React + TypeScript + Vite
+# 🔺 Sierpinski Fractal Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is an interactive web application that visualizes the construction of the famous **Sierpinski Triangle** using the **Chaos Game** algorithm. It allows users to define the number of points to generate and dynamically observe the fractal forming on the canvas.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Project Concept
 
-## Expanding the ESLint configuration
+The main idea is to provide a **visual and educational** experience about fractals, particularly the Sierpinski Triangle. Instead of just showing the final image, the app demonstrates the **iterative process** of its creation, where each point is added sequentially, gradually revealing the complex fractal structure over time.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ⚙️ How It Works
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+The Sierpinski Triangle is generated using the **Chaos Game Algorithm**:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Base Vertices**: An initial triangle (three outer vertices) is defined.
+2. **Starting Point**: A random point is chosen inside this triangle.
+3. **Iterations**: The following steps are repeated thousands of times:
+   - One of the three triangle vertices is randomly selected.
+   - The midpoint between the current point and the chosen vertex is calculated.
+   - This new midpoint is drawn on the canvas.
+   - The new point becomes the current point for the next iteration.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+By repeating this process many times, the points gradually fill in the area of the Sierpinski Triangle, leaving behind the characteristic empty spaces that define the fractal.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🚀 Features
+
+- **Custom Point Input**: Users can specify the number of points to generate.
+- **Input Validation**: Only positive integers are accepted, with visual feedback for invalid entries.
+- **Dynamic Visualization**: Points are drawn one by one with a small delay (5ms), allowing users to observe the fractal forming in real time.
+- **Progress Bar**: A real-time progress bar displays the percentage of generated points.
+- **Simulation Cancellation**: Users can cancel the simulation at any time, which clears the canvas.
+- **Easy Restart**: After completion or cancellation, a button allows users to easily start a new simulation.
+- **Responsive Design**: The interface adapts to both desktop and mobile screens.
+
+---
+
+## 🛠️ Technologies Used
+
+- **React**: JavaScript library for building user interfaces.
+- **TypeScript**: A statically typed superset of JavaScript.
+- **HTML Canvas API**: For drawing points and the triangle directly in the browser.
+- **Tailwind CSS**: A utility-first CSS framework for rapid and responsive styling.
+- **Shadcn UI**: A set of accessible, customizable components built with Tailwind and based on Radix UI.
+
+---
