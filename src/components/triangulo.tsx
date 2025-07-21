@@ -20,6 +20,8 @@ export default function App() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const totalIterationsRef = useRef<number>(0);
 
+    const ANIMATION_SPEED = 5; // speed in milliseconds
+
 
     const validateInput = (value: string): boolean => {
         const regex = /^[1-9]\d*$/;
@@ -149,7 +151,7 @@ export default function App() {
 
             setTimeout(() => {
                 sierpinski(iteracoesRestantes - 1, novoPonto);
-            }, 5);
+            }, ANIMATION_SPEED);
         } else {
             setPercent(100);
         }
